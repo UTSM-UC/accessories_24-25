@@ -1,0 +1,82 @@
+VERSION ""
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_:
+
+
+BO_ 3221225472 VECTOR__INDEPENDENT_SIG_MSG: 0 Vector__XXX
+ SG_ NewSignal_0003 : 0|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ wipers : 32|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ left : 24|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ right : 16|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ brake : 8|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ front : 0|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ left_signal_en : 0|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ right_signal_en : 8|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ front_lights_en : 16|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ horn_en : 24|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ wiper_en : 32|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ hazard_lights_en : 40|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ left_echo : 0|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ right_echo : 8|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ brake_echo : 16|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ hazard_echo : 24|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ left_echo : 0|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ right_echo : 8|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ front_echo : 16|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ horn_echo : 24|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ wiper_echo : 32|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ hazard_echo : 40|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ left_signal_en : 0|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ right_signal_en : 1|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ brake_lights_en : 2|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ hazard_lights_en : 3|1@1+ (1,0) [0|0] "" Vector__XXX
+
+BO_ 768 steering: 8 Vector__XXX
+ SG_ left_signal : 0|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ right_signal : 1|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ hazards : 2|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ wiper : 3|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ headlights : 4|1@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ horn : 5|1@1+ (1,0) [0|0] "" Vector__XXX
+
+BO_ 769 front: 8 Vector__XXX
+ SG_ brakes : 0|1@1+ (1,0) [0|0] "" Vector__XXX
+
+
+
+BA_DEF_  "BusType" STRING ;
+BA_DEF_DEF_  "BusType" "CAN";
+
