@@ -1,0 +1,10 @@
+Change Component Footprint: Designator=J1 Old Footprint=MOLEX_0026013115 New Footprint=MOLEX_39281043
+Change Component Comment : Designator=J1 Old Comment=0026013115 New Comment=39281043
+Change component parameters: Designator = "J1" ("J1"); Footprint = "MOLEX_0026013115"; UniqueID = "\DRJFTGRQ" ("\DRJFTGRQ")
+Change component parameters (AddParameter): Name = "Availability"; Value = "Unavailable"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "MF"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "MP"; Value = "39281043"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Package"; Value = "None"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Price"; Value = "None"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Member To Class: ClassName=can Member=Component C1 Cap

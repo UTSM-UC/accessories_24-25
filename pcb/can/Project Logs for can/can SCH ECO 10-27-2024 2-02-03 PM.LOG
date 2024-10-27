@@ -1,0 +1,4 @@
+Remove Pin=J1-1 From Net=CANH
+Remove Pin=J1-2 From Net=CANL
+Remove Pin=J1-3 From Net=CANH
+Remove Pin=J1-4 From Net=CANL
