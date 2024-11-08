@@ -1,8 +1,0 @@
-Removed Pin From Net: NetName=INT Pin=H1-1
-Removed Pin From Net: NetName=CS Pin=H1-5
-Removed Pin From Net: NetName=CANH Pin=H2-4
-Removed Pin From Net: NetName=CANL Pin=H2-5
-Added Pin To Net: NetName=CS Pin=H1-1
-Added Pin To Net: NetName=INT Pin=H1-5
-Added Pin To Net: NetName=CANL Pin=H2-4
-Added Pin To Net: NetName=CANH Pin=H2-5

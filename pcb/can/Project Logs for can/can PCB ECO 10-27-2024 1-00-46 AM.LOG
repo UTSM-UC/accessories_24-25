@@ -1,4 +1,0 @@
-Change Component Designator: OldDesignator=Y1 NewDesignator=Y2
-Change Net Name : Old Net Name=OSC1 New Net Name=OSC3
-Change Net Name : Old Net Name=OSC2 New Net Name=OSC4
-Added Member To Class: ClassName=can Member=Component Y2 TSX-3225 16.0000MF09Z-AC0
