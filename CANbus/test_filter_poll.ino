@@ -28,7 +28,7 @@ void setup() {
   }
 
   // Set CAN mode to normal operation
-  CAN0.setMode(MCP_NORMAL);
+  CAN0.setMode(MODE_CONFIG);
 
   pinMode(CAN0_INT, INPUT);  // Configuring pin for /INT input
   // attachInterrupt(digitalPinToInterrupt(CAN0_INT), CAN_ISR, FALLING);
@@ -36,9 +36,8 @@ void setup() {
   Serial.println("CAN bus ready to send and receive.");
   Serial.println("ID  DLC   DATA");
 
-  CAN0.init_Mask(0, 0, 0x7FF); 
-  CAN0.init_Filt(0, 0, 0x036);
-  CAN0.init_Filt(1, 0, 0x100); 
+  CAN0.init_Mask(0, 0, 0x700); 
+  CAN0.init_Filt(0, 0, 0xF00); 
 
   // Return to normal mode
   CAN0.setMode(MCP_NORMAL);
@@ -86,7 +85,7 @@ void readCANMessage() {
 // Function to send CAN message based on button state
 void sendCANMessage() {
   // Prepare CAN messages
-  unsigned long can_id1 = 0x0F6;  // CAN ID for message 1
+  unsigned long can_id1 = 0x711;  // CAN ID for message 1
   // unsigned long can_id2 = 0x036;  // CAN ID for message 2
   unsigned char data_m1[1] = {0x8E};  // Data payload for message 1
   // unsigned char data_m2[1] = {0x00};  // Data payload for message 2
