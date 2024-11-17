@@ -75,6 +75,9 @@ BO_ 768 steering: 8 Vector__XXX
 BO_ 769 front: 8 Vector__XXX
  SG_ brakes : 0|1@1+ (1,0) [0|0] "" Vector__XXX
 
+BO_ 770 rear: 8 Vector__XXX
+ SG_ speed : 0|16@1+ (1,0) [0|0] "" Vector__XXX
+
 
 
 BA_DEF_  "BusType" STRING ;
