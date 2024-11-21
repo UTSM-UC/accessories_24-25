@@ -36,7 +36,11 @@ void setup() {
   Serial.println("CAN bus ready to send and receive.");
   Serial.println("ID  DLC   DATA");
 
-  CAN0.init_Mask(0, 0, 0x700); 
+  //CAN0.init_Mask(0, 0, 0x700); 
+  //Mask should be all ones, care about all digits
+
+  CAN0.init_Mask(0, 0, 0xFFF);
+
   CAN0.init_Filt(0, 0, 0xF00); 
 
   // Return to normal mode
