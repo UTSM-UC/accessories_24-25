@@ -28,24 +28,18 @@ void setup() {
   }
 
   // Set CAN mode to normal operation
-  // CAN0.setMode(MODE_CONFIG);
-
+  CAN0.setMode(MODE_CONFIG);
   pinMode(CAN0_INT, INPUT);  // Configuring pin for /INT input
   // attachInterrupt(digitalPinToInterrupt(CAN0_INT), CAN_ISR, FALLING);
 
   Serial.println("CAN bus ready to send and receive.");
   Serial.println("ID  DLC   DATA");
 
-<<<<<<<< HEAD:CANbus/Test_filter_parsing_poll/Test_filter_parsing_poll.ino
-========
-  //CAN0.init_Mask(0, 0, 0x700); 
-  //Mask should be all ones, care about all digits
+  //CAN0.init_Mask(0, 0, 0x7FF); 
+  CAN0.init_Mask(0, 0, 0x700); 
+  CAN0.init_Filt(0, 0, 0xF00);
+  //CAN0.init_Filt(1, 0, 0x100); 
 
-  CAN0.init_Mask(0, 0, 0xFFF);
-
-  CAN0.init_Filt(0, 0, 0xF00); 
-
->>>>>>>> b882cd5c54b43eb7b86361e953bbf8cbf1d46d62:CANbus/tests_filter_poll/test_filter_poll/test_filter_poll.ino
   // Return to normal mode
   CAN0.setMode(MCP_NORMAL);
 
@@ -54,27 +48,27 @@ void setup() {
 void readCANMessage() {
   //while (1) {  // Check if data is available
   if (CAN0.checkReceive() == CAN_MSGAVAIL){
-    CAN0.readMsgBuf(&canId, 0, &len, buf);   // Read data
+    CAN0.readMsgBuf(&canId, &len, buf);   // Read data
   } else {
     for (int i = 0; i < 8; i++){  // clear the buffer
       buf[i] = 0;
     }
   }
   
-    Serial.print("Received; CAN ID: ");
+    Serial.print("Received CAN ID: ");
     Serial.print(canId, HEX);
     Serial.print(", Data: ");
     
     for (int i = 0; i < len; i++) {
-      Serial.print(buf[i], HEX);
+      Serial.print(buf[i], DEC);
       Serial.print(" ");
     }
     Serial.println();
 
-    // for (int i = 0; i < len; i++) {  // Print the received data
-    //   Serial.print(buf[i], DEC);
-    //   Serial.print(" ");
-    // }
+    for (int i = 0; i < len; i++) {  // Print the received data
+      Serial.print(buf[i], DEC);
+      Serial.print(" ");
+    }
 
     if (buf[0] > 0) {
       digitalWrite(led, HIGH);  // Turn on LED if first byte > 0
@@ -85,32 +79,27 @@ void readCANMessage() {
       //Serial.println("LOW");
       //Serial.println();
     }
-    // Serial.println("Message received");
+    Serial.println("Message received");
   //}
 }
 
 // Function to send CAN message based on button state
 void sendCANMessage() {
   // Prepare CAN messages
-  unsigned long can_id1 = 0x102;  // CAN ID for message 1
+  unsigned long can_id1 = 0x0F6;  // CAN ID for message 1
   // unsigned long can_id2 = 0x036;  // CAN ID for message 2
-  unsigned char data_m1[1] = {0x097};  // Data payload for message 1
+  unsigned char data_m1[1] = {0x8E};  // Data payload for message 1
   // unsigned char data_m2[1] = {0x00};  // Data payload for message 2
   
   buttonState = digitalRead(buttonPin);  // Read the button state
-
-  Serial.print("Sent;     ");
   
   if (buttonState == LOW) {  // If button is pressed
     CAN0.sendMsgBuf(can_id1, 0, 1, data_m1);  // Send message 1
-    Serial.print("Can ID: ");
-    Serial.print(can_id1, HEX);
-    Serial.print(" Data: ");
-    Serial.print(data_m1[0], HEX);
-    Serial.println(" HIGH");
-  } else {
-    Serial.println("CAN ID: ___, Data: __, LOW");
-  }
+    Serial.println("Sent: HIGH signal");
+  } // else {  // If button is not pressed
+    // CAN0.sendMsgBuf(can_id2, 0, 1, data_m2);  // Send message 2
+    // Serial.println("Sent: LOW signal");
+  // }
 }
 
 void loop() {
