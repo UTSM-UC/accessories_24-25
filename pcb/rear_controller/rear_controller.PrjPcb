@@ -69,6 +69,23 @@ GenerateClassCluster=0
 DocumentUniqueId=TTAQOCQO
 
 [Document2]
+DocumentPath=..\..\..\..\..\..\Downloads\SSW_110_01_T_S_010\SSW-110-X-X-S-010\SSW-110-X-X-S-010.SchLib
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=0
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=ZWIJMJPC
+
+[Document3]
 DocumentPath=asib.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -85,7 +102,24 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=SPLBCTDM
 
-[Document3]
+[Document4]
+DocumentPath=..\..\..\..\..\..\Downloads\SSW_110_01_T_S_010\SSW-110-X-X-S-010\SAMTEC_SSW-110-X-X-S-010.PcbLib
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=0
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=NXPBICED
+
+[Document5]
 DocumentPath=asib.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -102,7 +136,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=AMMEHOUU
 
-[Document4]
+[Document6]
 DocumentPath=rear_controller.PcbDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -119,7 +153,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=HCKVBIXQ
 
-[Document5]
+[Document7]
 DocumentPath=rear_controller.PCBDwf
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -136,7 +170,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=USNELLIW
 
-[Document6]
+[Document8]
 DocumentPath=..\..\..\Altium Rear ASIB\0026013115.IntLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -153,7 +187,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document7]
+[Document9]
 DocumentPath=..\..\..\Altium Rear ASIB\0026013115\0026013115.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -168,9 +202,9 @@ ClassGenCCAutoRoomEnabled=0
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=
+DocumentUniqueId=CXICYHGS
 
-[Document8]
+[Document10]
 DocumentPath=..\..\..\Altium Rear ASIB\0026013115\MOLEX_0026013115.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
