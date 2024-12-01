@@ -36,8 +36,6 @@ void setup() {
   Serial.println("CAN bus ready to send and receive.");
   Serial.println("ID  DLC   DATA");
 
-<<<<<<<< HEAD:CANbus/Test_filter_parsing_poll/Test_filter_parsing_poll.ino
-========
   //CAN0.init_Mask(0, 0, 0x700); 
   //Mask should be all ones, care about all digits
 
@@ -45,7 +43,6 @@ void setup() {
 
   CAN0.init_Filt(0, 0, 0xF00); 
 
->>>>>>>> b882cd5c54b43eb7b86361e953bbf8cbf1d46d62:CANbus/tests_filter_poll/test_filter_poll/test_filter_poll.ino
   // Return to normal mode
   CAN0.setMode(MCP_NORMAL);
 
