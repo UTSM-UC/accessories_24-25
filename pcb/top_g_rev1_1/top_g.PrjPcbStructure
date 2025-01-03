@@ -1,0 +1,4 @@
+Record=TopLevelDocument|FileName=top_g.SchDoc|SheetNumber=1
+Record=SheetSymbol|SourceDocument=top_g.SchDoc|Designator=U_ASIB|SchDesignator=U_ASIB|FileName=ASIB.SchDoc|SheetNumber=2|SymbolType=Normal|RawFileName=ASIB.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
+Record=SheetSymbol|SourceDocument=top_g.SchDoc|Designator=U_CAN|SchDesignator=U_CAN|FileName=CAN.SchDoc|SheetNumber=3|SymbolType=Normal|RawFileName=CAN.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
+Record=SheetSymbol|SourceDocument=top_g.SchDoc|Designator=U_PMU|SchDesignator=U_PMU|FileName=PMU.SchDoc|SheetNumber=4|SymbolType=Normal|RawFileName=PMU.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
