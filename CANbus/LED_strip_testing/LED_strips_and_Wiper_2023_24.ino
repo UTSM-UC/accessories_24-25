@@ -8,6 +8,7 @@
 #ifdef __AVR__
 #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
 #endif
+
 #define LED_PIN     6 // controls breaks = strip
 #define LED2_PIN    5 // controls blinker/hazard
 #define LED3_PIN     9 // controls breaks = strip
@@ -22,6 +23,7 @@
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel strip2(LED_COUNT2, LED2_PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel strip3(LED_COUNT2, LED3_PIN, NEO_GRB + NEO_KHZ800);
+
 int break_val = 30;
 // Include the Servo library
 #include <Servo.h>
@@ -62,6 +64,7 @@ void setup() {
    servo.write(0);
    delay(2000);
 }
+
 void break_on(void){
   if (digitalRead(ENABLE4_PIN) == HIGH) {
     break_val = 30;
@@ -111,10 +114,7 @@ void wipers(void) {
       servo.write(0);
       wiperStart = millis();
     }
-  }
-
-  
-  
+  } 
 }
 
 void loop() {
@@ -124,7 +124,7 @@ void loop() {
   strip2.clear();
   strip3.clear();
   // blinker lights
-  if(digitalRead(ENABLE3_PIN) == LOW){
+  if(digitalRead(ENABLE3_PIN) == LOW){  
     colorWipe3(strip2.Color(255,   30,   0), SPEED);
     colorWipe3(strip3.Color(255,   30,   0), SPEED);
   }
@@ -139,6 +139,8 @@ void loop() {
   strip2.show();
   strip3.show();
 }
+
+
 void colorWipe_break(uint32_t color, int wait) {
     for(int j = 0; (digitalRead(ENABLE4_PIN) == LOW); j++) { // For each pixel in strip...
       for(int i = 0; i < LED_COUNT; i++){
