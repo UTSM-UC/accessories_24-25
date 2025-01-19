@@ -42,7 +42,6 @@ void setup() {
   CAN0.init_Mask(0, 0, 0xFFF);
 
   CAN0.init_Filt(0, 0, 0xF00); 
-
   // Return to normal mode
   CAN0.setMode(MCP_NORMAL);
 
