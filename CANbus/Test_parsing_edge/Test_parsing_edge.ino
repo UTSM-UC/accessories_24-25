@@ -67,9 +67,9 @@ int edgeDetector () {
     lastButtonState = buttonState;
     if (buttonState == HIGH) {
       // if the current state is HIGH then the button went from off to on:
-      return 1;
-    } else{
       return 0;
+    } else{
+      return 1;
     }
   }
   return -1;
@@ -112,10 +112,12 @@ void readCANMessage() {
     }
     // Serial.println("Message received");
 
+
   } else {
     for (int i = 0; i < 8; i++){  // clear the buffer
       buf[i] = 0;
     }
+  
   }
 }
 
@@ -126,16 +128,17 @@ void sendCANMessage() {
   unsigned long can_id1 = 0x102;  // CAN ID that does not pass mask and filter
   // unsigned long can_id1 = 0x103;
   unsigned char data_m1[1] = {0x097};  // Data payload for message 1
+  unsigned char data_m0[1] = {0x000}; 
   // unsigned char data_m2[1] = {0x00};  // Data payload for message 2
   
   int state = edgeDetector(); // 1 for on 0 for off -1 for unchanged
   // Serial.print("state = ");
   // Serial.print(state);
 
-  if(state =! -1){
-      Serial.print("\nSent;     ");
+  if(state != -1){
+      Serial.print("Sent;     ");
   
-      if (state = 1) {  // If button is pressed
+      if (state == 1) {  // If button is pressed
         CAN0.sendMsgBuf(can_id1, 0, 1, data_m1);  // Send message 1
         Serial.print("Can ID: ");
         Serial.print(can_id1, HEX);
@@ -143,6 +146,7 @@ void sendCANMessage() {
         Serial.print(data_m1[0], HEX);
         Serial.println(" HIGH");
       } else {    // if button is unpressed
+        CAN0.sendMsgBuf(can_id1, 0, 1, data_m0);
         Serial.println("CAN ID: ___, Data: __, LOW");
       }
   }
