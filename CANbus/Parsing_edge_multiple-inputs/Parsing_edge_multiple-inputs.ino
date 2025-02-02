@@ -13,9 +13,8 @@ const int CAN0_INT = 2;
 int buttonStates[NUM_INPUTS] = {0};
 int lastButtonStates[NUM_INPUTS] = {0};
 int sendStates[NUM_INPUTS] = {0};
-unsigned char data_m[NUM_INPUTS] = {0}; //array with data payloads for each corresponding digital input pin
-data_m[3] = 0x98;
-data_m[4] = 0x97;
+//unsigned char data_m[NUM_INPUTS] = {0}; //array with data payloads for each corresponding digital input pin
+
 
 // received data
 long unsigned int canId;
@@ -37,7 +36,8 @@ void setup() {
   pinMode(buttonPin4, INPUT_PULLUP);  // Assuming button is active-low
   pinMode(buttonPin3, INPUT_PULLUP);
   Serial.begin(115200);
-  
+  // data_m[3] = {0x098};
+  // data_m[4] = {0x097};
   // Initialize the CAN bus at 500 kbps
   if (CAN0.begin(MCP_ANY, CAN_500KBPS, MCP_8MHZ) == CAN_OK) {
     Serial.println("CAN Init OK!");
@@ -99,6 +99,7 @@ void readCANMessage() {
     for (int i = 0; i < len; i++) {
       Serial.print(buf[i], HEX);
       Serial.print(" ");
+      Serial.println();
     }
     // Serial.println();
 
@@ -109,7 +110,7 @@ void readCANMessage() {
 
     if (masked_canId & filter) {
       // Serial.println("The final bit is 1");
-      if (buf[0] == 0x98) {
+      if (buf[0] == 0x97) {
         digitalWrite(led, HIGH);  // Turn on LED if first byte > 0
         //Serial.println("HIGH");
         //Serial.println();
@@ -133,60 +134,62 @@ void readCANMessage() {
 // Function to send CAN message based on button state
 void sendCANMessage() {
   unsigned long can_id1 = 0x102;  // CAN ID that does not pass mask and filter
-  
+  unsigned char data_m0[1] = {0x000};
+  unsigned char data_m1[1] = {0x097};
+  unsigned char data_m2[1] = {0x098};
   for(int i = 0; i < NUM_INPUTS; i++){           // update states for all input buttons
     sendStates[i] = edgeDetector(i);            // 1 for on 0 for off -1 for unchanged
   }
 
-  for(int i = 0; i < NUM_INPUTS; i++){          
-      if(sendStates[i] != -1){
-        Serial.print("Sent;     ");
+  // for(int i = 0; i < NUM_INPUTS; i++){          
+  //     if(sendStates[i] != -1){
+  //       Serial.print("Sent;     ");
     
-        if (sendStates[i] == 1) {                     // If button is pressed
-          CAN0.sendMsgBuf(can_id1, 0, 1, data_m[i]);  // Send corresponding message
-          Serial.print("Can ID: ");
-          Serial.print(can_id1, HEX);
-          Serial.print(" Data: ");
-          Serial.print(data_m[i], HEX);
-          Serial.println(" HIGH");
-        } else {    // if button is unpressed
-          CAN0.sendMsgBuf(can_id1, 0, 1, data_m[0]);
-          Serial.println("CAN ID: ___, Data: __, LOW");
+  //       if (sendStates[i] == 1) {                     // If button is pressed
+  //         CAN0.sendMsgBuf(can_id1, 0, 1, data_m[i]);  // Send corresponding message
+  //         Serial.print("Can ID: ");
+  //         Serial.print(can_id1, HEX);
+  //         Serial.print(" Data: ");
+  //         Serial.print(data_m[i], HEX);
+  //         Serial.println(" HIGH");
+  //       } else {    // if button is unpressed
+  //         CAN0.sendMsgBuf(can_id1, 0, 1, data_m[0]);
+  //         Serial.println("CAN ID: ___, Data: __, LOW");
+  //     }
+  //   }
+  // }
+
+  if(sendStates[3] != -1){
+      Serial.print("Sent;     ");
+  
+      if (sendStates[3] == 1) {  // If button is pressed
+        CAN0.sendMsgBuf(can_id1, 0, 1, data_m2[0]);  // Send message 2
+        Serial.print("Can ID: ");
+        Serial.print(can_id1, HEX);
+        Serial.print(" Data: ");
+        Serial.print(data_m2[0], HEX);
+        Serial.println(" HIGH");
+      } else {    // if button is unpressed
+        CAN0.sendMsgBuf(can_id1, 0, 1, data_m0[0]);
+        Serial.println("CAN ID: ___, Data: __, LOW");
       }
-    }
   }
 
-  // if(sendStates[3] != -1){
-  //     Serial.print("Sent;     ");
+  if(sendStates[4] != -1){
+      Serial.print("Sent;     ");
   
-  //     if (sendStates[3] == 1) {  // If button is pressed
-  //       CAN0.sendMsgBuf(can_id1, 0, 1, data_m2);  // Send message 2
-  //       Serial.print("Can ID: ");
-  //       Serial.print(can_id1, HEX);
-  //       Serial.print(" Data: ");
-  //       Serial.print(data_m2[0], HEX);
-  //       Serial.println(" HIGH");
-  //     } else {    // if button is unpressed
-  //       CAN0.sendMsgBuf(can_id1, 0, 1, data_m0);
-  //       Serial.println("CAN ID: ___, Data: __, LOW");
-  //     }
-  // }
-
-  // if(sendStates[4] != -1){
-  //     Serial.print("Sent;     ");
-  
-  //     if (sendStates[4] == 1) {  // If button is pressed
-  //       CAN0.sendMsgBuf(can_id1, 0, 1, data_m1);  // Send message 1
-  //       Serial.print("Can ID: ");
-  //       Serial.print(can_id1, HEX);
-  //       Serial.print(" Data: ");
-  //       Serial.print(data_m1[0], HEX);
-  //       Serial.println(" HIGH");
-  //     } else {    // if button is unpressed
-  //       CAN0.sendMsgBuf(can_id1, 0, 1, data_m0);
-  //       Serial.println("CAN ID: ___, Data: __, LOW");
-  //     }
-  // }
+      if (sendStates[4] == 1) {  // If button is pressed
+        CAN0.sendMsgBuf(can_id1, 0, 1, data_m1[0]);  // Send message 1
+        Serial.print("Can ID: ");
+        Serial.print(can_id1, HEX);
+        Serial.print(" Data: ");
+        Serial.print(data_m1[0], HEX);
+        Serial.println(" HIGH");
+      } else {    // if button is unpressed
+        CAN0.sendMsgBuf(can_id1, 0, 1, data_m0[0]);
+        Serial.println("CAN ID: ___, Data: __, LOW");
+      }
+  }
 }
 
 void loop() {
