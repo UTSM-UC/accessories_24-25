@@ -10,14 +10,14 @@
 #endif
 
 #define LED_PIN     6 // controls breaks = strip
-#define LED2_PIN    5 // controls blinker/hazard
+#define LED2_PIN    8 //5 // controls blinker/hazard
 #define LED3_PIN     9 // controls breaks = strip
-#define ENABLE1_PIN  A0 // bliker light 1 --> right = blue (strip2)
-#define ENABLE2_PIN  A1 // bliker light 2 --> left = green (strip2)
-#define ENABLE3_PIN  A2 // overwrites A0 and A1  --> hazards = orange (strip2)
+#define ENABLE1_PIN  2 // A0 // bliker light 1 --> right = blue (strip2)
+#define ENABLE2_PIN  3 // A1 // bliker light 2 --> left = green (strip2)
+#define ENABLE3_PIN  7 // A2 // overwrites A0 and A1  --> hazards = orange (strip2)
 #define ENABLE4_PIN  2 // controls breaklights --> only strip
-#define LED_COUNT  60 // 60 per Strip
-#define LED_COUNT2  15 // 60 per Strip
+#define LED_COUNT  24 // 60 per Strip
+#define LED_COUNT2  24 // 60 per Strip
 #define BRIGHTNESS 255*0.2 // Set BRIGHTNESS to about 1/5 (max = 255)
 #define SPEED 100 // 255 Slowest, 0 Fastest
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
