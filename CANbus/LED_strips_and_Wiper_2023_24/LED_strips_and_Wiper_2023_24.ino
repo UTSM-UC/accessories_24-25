@@ -16,8 +16,8 @@
 #define ENABLE2_PIN  3 // A1 // bliker light 2 --> left = green (strip2)
 #define ENABLE3_PIN  7 // A2 // overwrites A0 and A1  --> hazards = orange (strip2)
 #define ENABLE4_PIN  2 // controls breaklights --> only strip
-#define LED_COUNT  24 // 60 per Strip
-#define LED_COUNT2  24 // 60 per Strip
+#define LED_COUNT  30 // 60 per Strip
+#define LED_COUNT2  30 // 60 per Strip
 #define BRIGHTNESS 255*0.2 // Set BRIGHTNESS to about 1/5 (max = 255)
 #define SPEED 100 // 255 Slowest, 0 Fastest
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);

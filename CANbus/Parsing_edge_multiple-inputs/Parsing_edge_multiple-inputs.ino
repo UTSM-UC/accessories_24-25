@@ -12,7 +12,7 @@ const int CAN0_INT = 2;
 //int lastButtonState = 0;
 int buttonStates[NUM_INPUTS] = {0};
 int lastButtonStates[NUM_INPUTS] = {0};
-int sendStates[NUM_INPUTS] = {0};
+int sendStates[NUM_INPUTS] = {-1, -1, -1, -1, -1, -1, -1, -1};
 //unsigned char data_m[NUM_INPUTS] = {0}; //array with data payloads for each corresponding digital input pin
 
 
@@ -140,11 +140,11 @@ void sendCANMessage() {
   unsigned char data_m2[1] = {0x098};
   for(int i = 0; i < NUM_INPUTS; i++){           // update states for all input buttons
     sendStates[i] = edgeDetector(i);            // 1 for on 0 for off -1 for unchanged
-    
-    if(sendStates[3] != -1){
-      Serial.print("Sent;     ");
+
+    if(i == 3 && sendStates[i] != -1){
+      Serial.print("\nSent;     ");
   
-      if (sendStates[3] == 1) {  // If button is pressed
+      if (sendStates[i] == 1) {  // If button is pressed
         CAN0.sendMsgBuf(can_id1, 0, 1, data_m2);  // Send message 2
         Serial.print("Can ID: ");
         Serial.print(can_id1, HEX);
@@ -157,10 +157,10 @@ void sendCANMessage() {
       }
     }
 
-    if(sendStates[4] != -1){
+    if(i == 4 && sendStates[i] != -1){
       Serial.print("Sent;     ");
   
-      if (sendStates[4] == 1) {  // If button is pressed
+      if (sendStates[i] == 1) {  // If button is pressed
         CAN0.sendMsgBuf(can_id1, 0, 1, data_m1);  // Send message 1
         Serial.print("Can ID: ");
         Serial.print(can_id1, HEX);
