@@ -2,7 +2,7 @@
 #include <mcp_can.h>
 
 #include <Adafruit_NeoPixel.h>
-//#include <Servo.h> //Include the servo library
+#include <Servo.h> //Include the servo library
 
 #ifdef __AVR__
 #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
@@ -23,14 +23,20 @@ Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel strip2(LED_COUNT2, LED2_PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel strip3(LED_COUNT2, LED3_PIN, NEO_GRB + NEO_KHZ800);
 
-
-
 const int SPI_CS_PIN = 10;
 MCP_CAN CAN0(SPI_CS_PIN);  // Set CS pin
 const int buttonPin = 4;
 const int led = 5;
 const int CAN0_INT = 2;
 int buttonState = 0;
+
+// int servoPin = 4;
+// int buttonPin = 3;
+
+Servo servo;
+const long wiperInterval = 2500;
+unsigned long previousMillis = 0;
+unsigned long wiperStart = 0;
 
 // received data
 long unsigned int canId;
@@ -42,6 +48,10 @@ void setup() {
   pinMode(led, OUTPUT);
   pinMode(buttonPin, INPUT_PULLUP);  // Assuming button is active-low
   Serial.begin(115200);
+
+  //  #if defined(__AVR_ATtiny85__) && (F_CPU == 16000000)
+  // clock_prescale_set(clock_div_1);
+  // #endif
   
   // Initialize the CAN bus at 500 kbps
   if (CAN0.begin(MCP_ANY, CAN_500KBPS, MCP_16MHZ) == CAN_OK) {
@@ -91,7 +101,10 @@ void setup() {
   strip3.show();            // Turn OFF all pixels ASAP
   strip3.setBrightness(BRIGHTNESS);
 
-  //missing wipers code
+  //wipers
+  pinMode(buttonPin, INPUT_PULLUP);
+   servo.attach(servoPin);
+   servo.write(0);
 
   delay(2000);
 
@@ -186,6 +199,36 @@ void break_off(void){ //function never used?
   strip.show();
 }
 
+void wipers(void) {
+  if (digitalRead(buttonPin) == LOW) { //button is pressed
+  unsigned long currentMillis = millis();
+  
+  if (currentMillis - previousMillis >= wiperInterval) {
+    // save the last time you blinked the LED
+    previousMillis = currentMillis;
+    // if the LED is off turn it on and vice-versa:
+      if (servo.read() == 0) {
+        servo.write(180);
+        wiperStart = millis();
+        }
+      } 
+      else {
+        if (millis() - wiperStart >= 1400) {
+          servo.write(0);
+          wiperStart = millis();
+    }
+  }
+
+  }
+  
+    else {
+    if (millis() - wiperStart >= 1400) {
+      servo.write(0);
+      wiperStart = millis();
+    }
+  } 
+}
+
 // Function to send CAN message based on button state
 void sendCANMessage() {
   // Prepare CAN messages
@@ -225,7 +268,7 @@ void loop() {
 void colorWipe(uint32_t color, int wait) {
     for(int i = 0; (digitalRead(ENABLE1_PIN) == LOW || digitalRead(ENABLE2_PIN) == LOW) && digitalRead(ENABLE3_PIN) == HIGH; i++) { // For each pixel in strip...
  
-    wipers();
+      wipers();
       strip2.setPixelColor(i, color);         //  Set pixel's color (in RAM)
       strip2.show();
       if(i == LED_COUNT2){
