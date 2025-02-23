@@ -8,32 +8,24 @@
 
 #define LED2_PIN 8
 #define LED3_PIN 6
-#define ENABLE3_PIN 7
+#define LEDBRAKES_PIN 7
 
-#define LED_COUNT 6         // 60 per Strip
-#define LED_COUNT2 6         // 60 per Strip
-#define LED_COUNT3 6         // 60 per Strip
+#define LED_COUNT 6         // 6 per Strip
+#define LED_COUNT2 6         // 6 per Strip
+#define LED_COUNT3 6         // 6 per Strip
+#define LED_COUNT_BRAKES 12
 #define BRIGHTNESS 255 * 0.2  // Set BRIGHTNESS to about 1/5 (max = 255)
 #define SPEED 100             // 255 Slowest, 0 Fastest
 Adafruit_NeoPixel strip2(LED_COUNT2, LED2_PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel strip3(LED_COUNT3, LED3_PIN, NEO_GRB + NEO_KHZ800);
-
-int break_val = 30;
+Adafruit_NeoPixel strip4(LED_COUNT_BRAKES, LEDBRAKES_PIN, NEO_GRB + NEO_KHZ800);
 
 const int SPI_CS_PIN = 10;
 MCP_CAN CAN0(SPI_CS_PIN);  // Set CS pin
-const int buttonPin4 = 4;
-const int buttonPin3 = 3;
-const int NUM_INPUTS = 8; 
-const int headlightPin = 5;
-const int hornPin = 3;
 const int CAN0_INT = 2;
-int buttonStates[NUM_INPUTS] = { 0 };
-int lastButtonStates[NUM_INPUTS] = { 0 };
-int sendStates[NUM_INPUTS] = { -1, -1, -1, -1, -1, -1, -1, -1 };
 //unsigned char data_m[NUM_INPUTS] = {0}; //array with data payloads for each corresponding digital input pin
 
-// Front (read)
+// Rear (read)
 // 1. 2 x headlights (same button)
 // 2. left turn light 
 // 3. right turn light
@@ -41,30 +33,26 @@ int sendStates[NUM_INPUTS] = { -1, -1, -1, -1, -1, -1, -1, -1 };
 // 5. wiper
 // 6. hazard
 
-// Front (send)
-// 1. brake (button 4)
+// Rear (send)
+// 1. brake (button 3)
 
 // received data
 long unsigned int canId;
 long unsigned int masked_canId;
 unsigned char len = 0;
 unsigned char buf[8] = { 0 };
-uint8_t canMessage = 0;
 volatile bool messageReceived = false;  // Flag to indicate message reception
 
 long unsigned int mask = 0xF;
 // long unsigned int filter = 0x1;
-long unsigned int filter = 0x2;
+long unsigned int filter = 0x3; //CAN_ID of front controller is 0x103
 
 uint16_t masking(uint16_t message) {
   return message & mask;
 }
 
 void setup() {
-  pinMode(ENABLE3_PIN, INPUT_PULLUP);   // internal pull-up resistor
-  pinMode(headlightPin, OUTPUT);
-  pinMode(hornPin, OUTPUT);
-  pinMode(buttonPin4, INPUT_PULLUP);  // Assuming button is active-low
+
   Serial.begin(115200);
   // Initialize the CAN bus at 500 kbps
   if (CAN0.begin(MCP_ANY, CAN_500KBPS, MCP_8MHZ) == CAN_OK) {
@@ -89,27 +77,12 @@ void setup() {
   strip3.begin();  // INITIALIZE NeoPixel strip object (REQUIRED)
   strip3.show();   // Turn OFF all pixels ASAP
   strip3.setBrightness(BRIGHTNESS);
+
+  strip4.begin();  // INITIALIZE NeoPixel strip object (REQUIRED)
+  strip4.show();   // Turn OFF all pixels ASAP
+  strip4.setBrightness(BRIGHTNESS);
   delay(2000);
 }
-
-int edgeDetector(int buttonNum) {
-  // read the pushbutton input pin:
-  buttonStates[buttonNum] = digitalRead(buttonNum);
-
-  // compare the buttonState to its previous state
-  if (buttonStates[buttonNum] != lastButtonStates[buttonNum]) {
-    // save the current state as the last state, for next time through the loop
-    lastButtonStates[buttonNum] = buttonStates[buttonNum];
-    if (buttonStates[buttonNum] == HIGH) {
-      // if the current state is HIGH then the button went from off to on:
-      return 0;
-    } else {
-      return 1;
-    }
-  }
-  return -1;
-}
-
 
 void readCANMessage() {
   bool received = CAN0.checkReceive() == CAN_MSGAVAIL;
@@ -130,12 +103,17 @@ void readCANMessage() {
 
     bool rightLightStrip = (buf[0] & (1 << 0));
     bool leftLightStrip = (buf[0] & (1 << 1));
-    bool headlight = (buf[0] & (1 << 2));
-    bool horn = (buf[0] & (1 << 3));
+    bool brakes = (buf[0] & (1 << 2));
     bool hazard = (buf[0] & (1 << 4));
-    bool wiper = (buf[0] & (1 << 5));
 
-    if (masked_canId & filter) {  // curr mask 0xF, filter 0x2, check whether last bit equals to 2
+    if (masked_canId == filter) {  // curr mask 0xF, filter 0x3, check whether last bit equals to 3 - means this message is from the front, hit the brakes.
+      if(brakes)
+        brake_on();
+      else
+        brake_off();
+    }
+
+    if (masked_canId == 0x2) {  // curr mask 0xF, filter 0x2, check whether last bit equals to 2
       if (hazard) {
         hazards(strip2.Color(255, 30, 0), SPEED);
       } else if (leftLightStrip) {
@@ -143,60 +121,17 @@ void readCANMessage() {
       } else if(rightLightStrip){
         orangeBlinker3(strip3.Color(255, 30, 0), SPEED);  // Turn on LED if first byte > 0
       }
-      if(headlight) {
-        digitalWrite(headlightPin, HIGH);
-      } else {
-        digitalWrite(headlightPin, LOW);
-      }
-      if(horn) {
-        digitalWrite(hornPin, HIGH);
-      } else digitalWrite(hornPin, LOW);
-    }
-  }
-  //  else {
-  //   for (int i = 0; i < 8; i++) {  // clear the buffer
-  //     buf[i] = 0;
-  //   }
-  }
-
-
-// Function to send CAN message based on button state
-void sendCANMessage() {
-  unsigned long can_id1 = 0x103;  // CAN ID of front messages
-
-  sendStates[4] = edgeDetector(4);      // 1 for on 0 for off -1 for unchanged
-
-  if (sendStates[4] != -1) {
-    Serial.print("\nSent;     ");
-
-    if (sendStates[4] == 1) {                   // If button is pressed
-      canMessage |= (1 << 2);                   // index 0
-      CAN0.sendMsgBuf(can_id1, 0, 1, &canMessage);  
-      Serial.print("Can ID: ");
-      Serial.print(can_id1, HEX);
-      Serial.print(" Data: ");
-      Serial.print(canMessage, HEX);
-      Serial.println(" HIGH");
-    } else {  // if button is unpressed
-      canMessage &= ~(1 << 2); //11011 turn off 2nd bit in canMessage
-      CAN0.sendMsgBuf(can_id1, 0, 1, &canMessage);
-      Serial.print("Can ID: ");
-      Serial.print(can_id1, HEX);
-      Serial.print(" Data: ");
-      Serial.print(canMessage, HEX);  
     }
   }
 }
+
+
+// Function to send CAN message based on button state
 
 void loop() {
   running_lights();
   // Check if a message is received
   readCANMessage();
-
-  // Send CAN message based on the button state
-  sendCANMessage();
-  strip2.show();
-
   delay(100);  // Adjust the delay as needed to control the sending frequency
 }
 
@@ -237,17 +172,23 @@ void orangeBlinker3(uint32_t color, int wait) {  //colorWipe3
 }
 
 void brake_on(void){
-  for(int i = 0; i < LED_COUNT; i++){
-        strip2.setPixelColor(i, 255, 0, 0);
+  for(int i = 0; i < LED_COUNT_BRAKES; i++){
+    strip4.setPixelColor(i, 255, 0, 0);
   }
-  strip2.show();
+  strip4.show();
+}
+
+void brake_off(void){
+  for(int i = 0; i < LED_COUNT_BRAKES; i++){
+    strip4.setPixelColor(i, 20, 0, 0);
+  }
+  strip4.show();
 }
 
 void running_lights(void){
-  break_val = 20;
   for(int i = 0; i < LED_COUNT; i++){
-        strip2.setPixelColor(i, break_val, 0, 0);
-        strip3.setPixelColor(i, break_val, 0, 0);
+        strip2.setPixelColor(i, 20, 0, 0);
+        strip3.setPixelColor(i, 20, 0, 0);
   }
   strip2.show();
   strip3.show();

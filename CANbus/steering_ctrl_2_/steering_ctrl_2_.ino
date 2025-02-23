@@ -6,14 +6,10 @@
 #include <avr/power.h>  // Required for 16 MHz Adafruit Trinket
 #endif
 
-#define LED2_PIN 8
-#define ENABLE3_PIN 7
-
 #define LED_COUNT 30          // 60 per Strip
 #define LED_COUNT2 30         // 60 per Strip
 #define BRIGHTNESS 255 * 0.2  // Set BRIGHTNESS to about 1/5 (max = 255)
 #define SPEED 100             // 255 Slowest, 0 Fastest
-Adafruit_NeoPixel strip2(LED_COUNT2, LED2_PIN, NEO_GRB + NEO_KHZ800);
 
 int break_val = 30;
 
@@ -21,12 +17,13 @@ const int SPI_CS_PIN = 10;
 MCP_CAN CAN0(SPI_CS_PIN);  // Set CS pin
 const int buttonPin4 = 4;
 const int buttonPin3 = 3;
-const int NUM_INPUTS = 8;
+const int buttonPin8 = 8;
+const int NUM_INPUTS = 9;
 const int led = 5;
 const int CAN0_INT = 2;
 int buttonStates[NUM_INPUTS] = { 0 };
 int lastButtonStates[NUM_INPUTS] = { 0 };
-int sendStates[NUM_INPUTS] = { -1, -1, -1, -1, -1, -1, -1, -1 };
+int sendStates[NUM_INPUTS] = { -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 //unsigned char data_m[NUM_INPUTS] = {0}; //array with data payloads for each corresponding digital input pin
 // Steering
 // 1. Left
@@ -44,7 +41,7 @@ long unsigned int canId;
 long unsigned int masked_canId;
 unsigned char len = 0;
 unsigned char buf[8] = { 0 };
-uint8_t canMessage;
+uint8_t canMessage = 0;
 
 volatile bool messageReceived = false;  // Flag to indicate message reception
 
@@ -57,10 +54,13 @@ uint16_t masking(uint16_t message) {
 }
 
 void setup() {
-  pinMode(ENABLE3_PIN, INPUT_PULLUP);   // internal pull-up resistor
-  pinMode(led, OUTPUT);
+  pinMode(5, INPUT_PULLUP);
   pinMode(buttonPin4, INPUT_PULLUP);  // Assuming button is active-low
   pinMode(buttonPin3, INPUT_PULLUP);
+  pinMode(7, INPUT_PULLUP);
+  pinMode(8, INPUT_PULLUP);
+  pinMode(6, INPUT_PULLUP);
+
   Serial.begin(115200);
   // Initialize the CAN bus at 500 kbps
   if (CAN0.begin(MCP_ANY, CAN_500KBPS, MCP_8MHZ) == CAN_OK) {
@@ -77,10 +77,6 @@ void setup() {
 
   // Return to normal mode
   CAN0.setMode(MCP_NORMAL);
-
-  strip2.begin();  // INITIALIZE NeoPixel strip object (REQUIRED)
-  strip2.show();   // Turn OFF all pixels ASAP
-  strip2.setBrightness(BRIGHTNESS);
   delay(2000);
 }
 
@@ -126,19 +122,6 @@ void readCANMessage() {
     bool horn = (canMessage & (1 << 3));
     bool wiper = (canMessage & (1 << 4));
     bool hazard = (canMessage & (1 << 5));
-
-    if (masked_canId & filter) {  // curr mask 0xF, filter 0x2, check whether last bit equals to 2
-
-      if (buf[0] & (1 << 2)) {
-        orangeBlinker(strip2.Color(255, 30, 0), SPEED);
-      } 
-      //else if(buf[0] == 0x98){
-         //brake_on();  // Turn on LED if first byte > 0
-      //}  
-      else {
-        digitalWrite(led, LOW);  // Turn off LED otherwise
-      }
-    }
     */
   }
   //  else {
@@ -151,14 +134,13 @@ void readCANMessage() {
 // Function to send CAN message based on button state
 void sendCANMessage() {
   unsigned long can_id1 = 0x102;  // CAN ID that does pass mask and filter
-  uint8_t canMessage = 0;
   // unsigned char data_m0[0] = { 0x000 };
   // unsigned char data_m1[1] = { 0x097 };
   // unsigned char data_m2[1] = { 0x098 };
   for (int i = 0; i < NUM_INPUTS; i++) {  // update states for all input buttons
-    sendStates[i] = edgeDetector(i);      // 1 for on 0 for off -1 for unchanged
+    sendStates[i] = edgeDetector(i);      // 1 for on, 0 for off, -1 for unchanged
 
-    if (i <= 8 && i >= 3 && sendStates[i] != -1) {
+    if (sendStates[i] != -1) {
       Serial.print("\nSent;     ");
 
       if (sendStates[i] == 1) {                   // If button is pressed
@@ -170,9 +152,12 @@ void sendCANMessage() {
         Serial.print(canMessage, HEX);
         Serial.println(" HIGH");
       } else {  // if button is unpressed
-        canMessage |= (0 << i-3);
+        canMessage &= ~(1 << i-3);        //111011 turn off (i-3)th bit
         CAN0.sendMsgBuf(can_id1, 0, 1, &canMessage);
-        Serial.println("CAN ID: ___, Data: __, LOW");
+        Serial.print("Can ID: ");
+        Serial.print(can_id1, HEX);
+        Serial.print(" Data: ");
+        Serial.print(canMessage, HEX);      
       }
     }
 
@@ -200,46 +185,10 @@ void sendCANMessage() {
 }
 
 void loop() {
-  running_lights();
   // Check if a message is received
   readCANMessage();
 
   // Send CAN message based on the button state
   sendCANMessage();
-  strip2.show();
-
   delay(100);  // Adjust the delay as needed to control the sending frequency
-}
-
-void orangeBlinker(uint32_t color, int wait) {  //colorWipe3
-  strip2.clear();
-  for (int i = 0; i < 30; i++) {  // For each pixel in strip...
-    
-    strip2.setPixelColor(i, color);
-    strip2.show();
-    if (i == LED_COUNT2) {
-      // erase the colors set
-      for (int j = 0; j < LED_COUNT2; j++) {
-        strip2.setPixelColor(j, strip2.Color(0, 0, 0));
-      }
-      //i = -1;
-    }
-    delay(wait);  //  Pause for a moment
-  };
-  return;
-}
-
-void brake_on(void){
-  for(int i = 0; i < LED_COUNT; i++){
-        strip2.setPixelColor(i, 255, 0, 0);
-  }
-  strip2.show();
-}
-
-void running_lights(void){
-  break_val = 40;
-  for(int i = 0; i < LED_COUNT; i++){
-        strip2.setPixelColor(i, break_val, 0, 0);
-  }
-  strip2.show();
 }
