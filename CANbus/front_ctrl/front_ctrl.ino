@@ -170,7 +170,8 @@ void sendCANMessage() {
     Serial.print("\nSent;     ");
 
     if (sendStates[4] == 1) {                   // If button is pressed
-      canMessage |= (1 << 2);                   // index 0
+      canMessage = buf[0];
+      canMessage |= (1<<2);
       CAN0.sendMsgBuf(can_id1, 0, 1, &canMessage);  
       Serial.print("Can ID: ");
       Serial.print(can_id1, HEX);
@@ -178,6 +179,7 @@ void sendCANMessage() {
       Serial.print(canMessage, HEX);
       Serial.println(" HIGH");
     } else {  // if button is unpressed
+      canMessage = buf[0];
       canMessage &= ~(1 << 2); //11011 turn off 2nd bit in canMessage
       CAN0.sendMsgBuf(can_id1, 0, 1, &canMessage);
       Serial.print("Can ID: ");

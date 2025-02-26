@@ -113,7 +113,7 @@ void readCANMessage() {
         brake_off();
     }
 
-    if (masked_canId == 0x2) {  // curr mask 0xF, filter 0x2, check whether last bit equals to 2
+    if (masked_canId == 0x2 || masked_canId == 0x3) {  // curr mask 0xF, filter 0x2, check whether last bit equals to 2
       if (hazard) {
         hazards(strip2.Color(255, 30, 0), SPEED);
       } else if (leftLightStrip) {
