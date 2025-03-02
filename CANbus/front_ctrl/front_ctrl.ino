@@ -6,8 +6,8 @@
 #include <avr/power.h>  // Required for 16 MHz Adafruit Trinket
 #endif
 
-#define LED2_PIN 8
-#define LED3_PIN 6
+#define LED2_PIN 3 // originally 8
+#define LED3_PIN 4 // originally 6
 #define ENABLE3_PIN 7
 
 #define LED_COUNT 6         // 60 per Strip
@@ -22,12 +22,20 @@ int break_val = 30;
 
 const int SPI_CS_PIN = 10;
 MCP_CAN CAN0(SPI_CS_PIN);  // Set CS pin
+
+const int NUM_INPUTS = 8; 
+
 const int buttonPin4 = 4;
 const int buttonPin3 = 3;
-const int NUM_INPUTS = 8; 
-const int headlightPin = 5;
-const int hornPin = 3;
+
 const int CAN0_INT = 2;
+const int hornPin = 0;
+const int LBlinkerPin = 3;
+const int RBlinkerPin = 4;
+const int headlightPin = 5;
+const int wiperPin = 7;
+const int brakePin = 8;
+
 int buttonStates[NUM_INPUTS] = { 0 };
 int lastButtonStates[NUM_INPUTS] = { 0 };
 int sendStates[NUM_INPUTS] = { -1, -1, -1, -1, -1, -1, -1, -1 };
@@ -43,6 +51,14 @@ int sendStates[NUM_INPUTS] = { -1, -1, -1, -1, -1, -1, -1, -1 };
 
 // Front (send)
 // 1. brake (button 4)
+
+// Following pcb
+// L Blinker D3
+// R Blinker D4
+// Headlights D5 and D6
+// Wipers D7
+// Brakes(send) D8
+// Horn D0
 
 // received data
 long unsigned int canId;
@@ -151,6 +167,9 @@ void readCANMessage() {
       if(horn) {
         digitalWrite(hornPin, HIGH);
       } else digitalWrite(hornPin, LOW);
+      if(wiper) {
+        digitalWrite(wiperPin, HIGH);
+      } else digitalWrite(wiperPin, LOW);
     }
   }
   //  else {
@@ -164,12 +183,12 @@ void readCANMessage() {
 void sendCANMessage() {
   unsigned long can_id1 = 0x103;  // CAN ID of front messages
 
-  sendStates[4] = edgeDetector(4);      // 1 for on 0 for off -1 for unchanged
+  sendStates[brakePin] = edgeDetector(brakePin);      // 1 for on 0 for off -1 for unchanged
 
-  if (sendStates[4] != -1) {
+  if (sendStates[brakePin] != -1) {
     Serial.print("\nSent;     ");
 
-    if (sendStates[4] == 1) {                   // If button is pressed
+    if (sendStates[brakePin] == 1) {                   // If button is pressed
       canMessage = buf[0];
       canMessage |= (1<<2);
       CAN0.sendMsgBuf(can_id1, 0, 1, &canMessage);  
