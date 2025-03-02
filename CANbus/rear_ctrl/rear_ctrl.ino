@@ -6,9 +6,16 @@
 #include <avr/power.h>  // Required for 16 MHz Adafruit Trinket
 #endif
 
-#define LED2_PIN 8
-#define LED3_PIN 6
-#define LEDBRAKES_PIN 7
+#define LEDBRAKES_PIN 3
+#define LED2_PIN 4
+#define LED3_PIN 5
+
+/*
+Output:
+* Brake - D3
+* Left turn - D4
+* Right turn - D5
+*/
 
 #define LED_COUNT 6         // 6 per Strip
 #define LED_COUNT2 6         // 6 per Strip
