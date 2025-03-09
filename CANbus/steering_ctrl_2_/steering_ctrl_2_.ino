@@ -18,12 +18,15 @@ MCP_CAN CAN0(SPI_CS_PIN);  // Set CS pin
 const int buttonPin4 = 4;
 const int buttonPin3 = 3;
 const int buttonPin8 = 8;
-const int NUM_INPUTS = 9;
+const int MAX_PIN_NUM = 20; //D0 = 0, A5 = 19
+const int NUM_INPUTS = 6;
 const int led = 5;
 const int CAN0_INT = 2;
-int buttonStates[NUM_INPUTS] = { 0 };
-int lastButtonStates[NUM_INPUTS] = { 0 };
-int sendStates[NUM_INPUTS] = { -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+int buttonStates[MAX_PIN_NUM] = { 0 };
+int lastButtonStates[MAX_PIN_NUM] = { 0 };
+int sendStates[MAX_PIN_NUM];
+int pins_used[NUM_INPUTS] = {0, 1, 3, 16, 17, 19}; //d0, d1, d3, a2, a3, a5
+
 //unsigned char data_m[NUM_INPUTS] = {0}; //array with data payloads for each corresponding digital input pin
 // Steering
 // 1. Left
@@ -53,13 +56,29 @@ uint16_t masking(uint16_t message) {
   return message & mask;
 }
 
+uint8_t pin_to_CANmsg(int pin){
+  int position;
+  switch(pin){
+    case 0: position = 1; break;
+    case 1: position = 4; break;
+    case 3: position = 0; break;
+    case 16: position = 5; break; //A2
+    case 17: position = 3; break; //A3
+    case 19: position = 2; break; //A5
+  }
+  uint8_t CANmsg = (1 << position);
+  return CANmsg;
+}
+
 void setup() {
-  pinMode(5, INPUT_PULLUP);
-  pinMode(buttonPin4, INPUT_PULLUP);  // Assuming button is active-low
-  pinMode(buttonPin3, INPUT_PULLUP);
-  pinMode(7, INPUT_PULLUP);
-  pinMode(8, INPUT_PULLUP);
-  pinMode(6, INPUT_PULLUP);
+  // pinMode(5, INPUT_PULLUP);
+  // pinMode(buttonPin4, INPUT_PULLUP);  // Assuming button is active-low
+  // pinMode(buttonPin3, INPUT_PULLUP);
+  // pinMode(7, INPUT_PULLUP);
+  // pinMode(8, INPUT_PULLUP);
+  // pinMode(6, INPUT_PULLUP);
+  for (int i = 0; i < MAX_PIN_NUM; i++) sendStates[i] = -1; //initialize to off
+  for(int i = 0; i < NUM_INPUTS; i++) pinMode(pins_used[i], INPUT_PULLUP);
 
   Serial.begin(115200);
   // Initialize the CAN bus at 500 kbps
@@ -137,14 +156,15 @@ void sendCANMessage() {
   // unsigned char data_m0[0] = { 0x000 };
   // unsigned char data_m1[1] = { 0x097 };
   // unsigned char data_m2[1] = { 0x098 };
-  for (int i = 0; i < NUM_INPUTS; i++) {  // update states for all input buttons
+  for (int j = 0; j < NUM_INPUTS; j++) {  // update states for all input buttons
+    int i = pins_used[j];
     sendStates[i] = edgeDetector(i);      // 1 for on, 0 for off, -1 for unchanged
 
     if (sendStates[i] != -1) {
       Serial.print("\nSent;     ");
 
       if (sendStates[i] == 1) {                   // If button is pressed
-        canMessage |= (1 << i-3);                   // index 0
+        canMessage |= (pin_to_CANmsg(i));                   // index 0
         CAN0.sendMsgBuf(can_id1, 0, 1, &canMessage);  
         Serial.print("Can ID: ");
         Serial.print(can_id1, HEX);
@@ -152,7 +172,7 @@ void sendCANMessage() {
         Serial.print(canMessage, HEX);
         Serial.println(" HIGH");
       } else {  // if button is unpressed
-        canMessage &= ~(1 << i-3);        //111011 turn off (i-3)th bit
+        canMessage &= ~(pin_to_CANmsg(i));        //111011 turn off bit corresponding to pin i
         CAN0.sendMsgBuf(can_id1, 0, 1, &canMessage);
         Serial.print("Can ID: ");
         Serial.print(can_id1, HEX);
