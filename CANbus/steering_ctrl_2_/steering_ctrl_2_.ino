@@ -80,19 +80,19 @@ void setup() {
   for (int i = 0; i < MAX_PIN_NUM; i++) sendStates[i] = -1; //initialize to off
   for(int i = 0; i < NUM_INPUTS; i++) pinMode(pins_used[i], INPUT_PULLUP);
 
-  Serial.begin(115200);
+  //Serial.begin(115200);
   // Initialize the CAN bus at 500 kbps
   if (CAN0.begin(MCP_ANY, CAN_500KBPS, MCP_8MHZ) == CAN_OK) {
-    Serial.println("CAN Init OK!");
+    //Serial.println("CAN Init OK!");
   } else {
-    Serial.println("CAN Init Failed!");
+    //Serial.println("CAN Init Failed!");
     while (1)
       ;  // init failed, stop the program
   }
 
   pinMode(CAN0_INT, INPUT);  // Configuring pin for /INT input
 
-  Serial.println("CAN bus ready to send and receive.");
+  //Serial.println("CAN bus ready to send and receive.");
 
   // Return to normal mode
   CAN0.setMode(MCP_NORMAL);
@@ -124,15 +124,15 @@ void readCANMessage() {
     CAN0.readMsgBuf(&canId, 0, &len, buf);  // Read data
     masked_canId = masking(canId);
 
-    Serial.print("Received; CAN ID: ");
-    Serial.print(canId, HEX);
-    Serial.print(", Data: ");
+    // Serial.print("Received; CAN ID: ");
+    // Serial.print(canId, HEX);
+    // Serial.print(", Data: ");
 
-    for (int i = 0; i < len; i++) {
-      Serial.print(buf[i], HEX);
-      Serial.print(" ");
-      Serial.println();
-    }
+    // for (int i = 0; i < len; i++) {
+    //   Serial.print(buf[i], HEX);
+    //   Serial.print(" ");
+    //   Serial.println();
+    // }
     
     /*
     bool headlight = (canMessage & (1 << 0));
@@ -161,46 +161,25 @@ void sendCANMessage() {
     sendStates[i] = edgeDetector(i);      // 1 for on, 0 for off, -1 for unchanged
 
     if (sendStates[i] != -1) {
-      Serial.print("\nSent;     ");
+      // Serial.print("\nSent;     ");
 
       if (sendStates[i] == 1) {                   // If button is pressed
         canMessage |= (pin_to_CANmsg(i));                   // index 0
         CAN0.sendMsgBuf(can_id1, 0, 1, &canMessage);  
-        Serial.print("Can ID: ");
-        Serial.print(can_id1, HEX);
-        Serial.print(" Data: ");
-        Serial.print(canMessage, HEX);
-        Serial.println(" HIGH");
+        // Serial.print("Can ID: ");
+        // Serial.print(can_id1, HEX);
+        // Serial.print(" Data: ");
+        // Serial.print(canMessage, HEX);
+        // Serial.println(" HIGH");
       } else {  // if button is unpressed
         canMessage &= ~(pin_to_CANmsg(i));        //111011 turn off bit corresponding to pin i
         CAN0.sendMsgBuf(can_id1, 0, 1, &canMessage);
-        Serial.print("Can ID: ");
-        Serial.print(can_id1, HEX);
-        Serial.print(" Data: ");
-        Serial.print(canMessage, HEX);      
+        // Serial.print("Can ID: ");
+        // Serial.print(can_id1, HEX);
+        // Serial.print(" Data: ");
+        // Serial.print(canMessage, HEX);      
       }
     }
-
-    /*
-    // button 6, for wiper
-    if (i == 6 && sendStates[i] != -1) {
-      Serial.print("\nSent;     ");
-
-      if (sendStates[i] == 1) {                   // If button is pressed
-        canMessage |= (1 << 4);                   // index 4
-        CAN0.sendMsgBuf(can_id1, 0, 1, &canMessage); 
-        Serial.print("Can ID: ");
-        Serial.print(can_id1, HEX);
-        Serial.print(" Data: ");
-        Serial.print(canMessage, HEX);
-        Serial.println(" HIGH");
-      } else {  // if button is unpressed
-        canMessage |= (0 << 4);                   // index 3
-        CAN0.sendMsgBuf(can_id1, 0, 1, &canMessage); 
-        Serial.println("CAN ID: ___, Data: __, LOW");
-      }
-    }
-    */
   }
 }
 
