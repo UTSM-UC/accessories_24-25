@@ -46,3 +46,36 @@ void CanHandler::sendCANMessage(int bitPosition, bool state) {
 bool CanHandler::getBit(int position) {
     return (buf[0] & (1 << position));
 }
+
+bool CanHandler::checkHornMessage() {
+    bool received = can->checkReceive() == CAN_MSGAVAIL;
+    if (received) {
+        unsigned char tempBuf[8];
+        unsigned char tempLen = 0;
+        long unsigned int tempCanId;
+        
+        // Read data without disturbing main buffer
+        can->readMsgBuf(&tempCanId, 0, &tempLen, tempBuf);
+        
+        // Check if it's the right message ID - monitor all horn messages
+        // We handle both horn-on AND horn-off
+        if ((tempCanId & CAN_FILTER)) {
+            // Check if horn state has changed
+            bool oldHornState = (buf[0] & (1 << 3));
+            bool newHornState = (tempBuf[0] & (1 << 3));
+            
+            // If the horn state has changed OR it's a horn message, update state
+            if (oldHornState != newHornState || (tempCanId & CAN_FILTER)) {
+                // Update the main buffer with the new message
+                canId = tempCanId;
+                maskedCanId = masking(canId);
+                len = tempLen;
+                for (int i = 0; i < 8; i++) {
+                    buf[i] = tempBuf[i];
+                }
+                return true;
+            }
+        }
+    }
+    return false;
+}

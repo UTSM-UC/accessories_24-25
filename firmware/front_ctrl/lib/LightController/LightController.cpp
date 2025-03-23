@@ -23,7 +23,20 @@ void LightController::begin() {
     strip3->setBrightness(BRIGHTNESS);
 }
 
-void LightController::orangeBlinker2(uint8_t r, uint8_t g, uint8_t b, int wait) {
+// Custom delay that checks for horn messages
+void LightController::customDelay(int ms, CanHandler* canHandler) {
+    unsigned long startTime = millis();
+    while (millis() - startTime < ms) {
+        // Check for horn messages every 5ms
+        if (canHandler->checkHornMessage()) {
+            // Handle horn immediately if detected - this now handles both on and off
+            digitalWrite(HORN_PIN, canHandler->getBit(3) ? LOW : HIGH);
+        }
+        delay(5); // Small delay between checks
+    }
+}
+
+void LightController::orangeBlinker2(uint8_t r, uint8_t g, uint8_t b, int wait, CanHandler* canHandler) {
     strip2->clear();
     for (int i = 0; i < LED_COUNT2; i++) {
         strip2->setPixelColor(i, strip2->Color(r, g, b));
@@ -33,11 +46,11 @@ void LightController::orangeBlinker2(uint8_t r, uint8_t g, uint8_t b, int wait) 
                 strip2->setPixelColor(j, strip2->Color(0, 0, 0));
             }
         }
-        delay(wait);
+        customDelay(wait, canHandler); // Use custom delay that checks for horn messages
     }
 }
 
-void LightController::orangeBlinker3(uint8_t r, uint8_t g, uint8_t b, int wait) {
+void LightController::orangeBlinker3(uint8_t r, uint8_t g, uint8_t b, int wait, CanHandler* canHandler) {
     strip3->clear();
     for (int i = 0; i < LED_COUNT3; i++) {
         strip3->setPixelColor(i, strip3->Color(r, g, b));
@@ -47,11 +60,11 @@ void LightController::orangeBlinker3(uint8_t r, uint8_t g, uint8_t b, int wait) 
                 strip3->setPixelColor(j, strip3->Color(0, 0, 0));
             }
         }
-        delay(wait);
+        customDelay(wait, canHandler); // Use custom delay that checks for horn messages
     }
 }
 
-void LightController::hazards(uint8_t r, uint8_t g, uint8_t b, int wait) {
+void LightController::hazards(uint8_t r, uint8_t g, uint8_t b, int wait, CanHandler* canHandler) {
     strip2->clear();
     strip3->clear();
     for (int i = 0; i < LED_COUNT2; i++) {
@@ -65,7 +78,7 @@ void LightController::hazards(uint8_t r, uint8_t g, uint8_t b, int wait) {
                 strip3->setPixelColor(j, strip3->Color(0, 0, 0));
             }
         }
-        delay(wait);
+        customDelay(wait, canHandler); // Use custom delay that checks for horn messages
     }
 }
 

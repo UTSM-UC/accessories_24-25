@@ -44,7 +44,7 @@ void loop() {
     }
   }
   
-  // Update animations (non-blocking part still exists)
+  // Update animations (non-blocking part)
   lightCtrl.update();
   
   // Read CAN messages
@@ -53,11 +53,11 @@ void loop() {
   // Handle CAN message data
   if (canHandler.getMaskedCanId() & CAN_FILTER) {
     if (canHandler.getBit(4)) {  // Hazard
-      lightCtrl.hazards(255, 30, 0, SPEED);  // Blocking hazard function
+      lightCtrl.hazards(255, 30, 0, SPEED, &canHandler);  // Pass canHandler to animation
     } else if (canHandler.getBit(1)) {  // Left turn
-      lightCtrl.orangeBlinker2(255, 30, 0, SPEED);  // Blocking left turn function
+      lightCtrl.orangeBlinker2(255, 30, 0, SPEED, &canHandler);  // Pass canHandler to animation
     } else if (canHandler.getBit(0)) {  // Right turn
-      lightCtrl.orangeBlinker3(255, 30, 0, SPEED);  // Blocking right turn function
+      lightCtrl.orangeBlinker3(255, 30, 0, SPEED, &canHandler);  // Pass canHandler to animation
     }
     
     // Handle digital outputs

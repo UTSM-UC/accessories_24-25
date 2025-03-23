@@ -23,6 +23,9 @@ public:
     void readCANMessage();
     void sendCANMessage(int bitPosition, bool state);
     
+    // New function to check for horn messages during animations
+    bool checkHornMessage();
+    
     // Getters for message data
     bool getBit(int position);
     unsigned char* getBuffer() { return buf; }

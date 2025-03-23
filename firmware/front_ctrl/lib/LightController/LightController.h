@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
 #include "../Config/Config.h"
+#include "../CanHandler/CanHandler.h"  // Add this include
 
 class LightController {
 private:
@@ -18,6 +19,9 @@ private:
     uint8_t animationType;  // 0 = none, 1 = left turn, 2 = right turn, 3 = hazard
     uint32_t animationColor;
     bool brakeActive;       // Track brake state separately
+    
+    // Custom non-blocking delay that checks for horn messages
+    void customDelay(int ms, CanHandler* canHandler);
 
 public:
     LightController();
@@ -27,10 +31,10 @@ public:
     void update();
     void stopAnimation();
     
-    // Original blocking functions
-    void orangeBlinker2(uint8_t r, uint8_t g, uint8_t b, int wait);
-    void orangeBlinker3(uint8_t r, uint8_t g, uint8_t b, int wait);
-    void hazards(uint8_t r, uint8_t g, uint8_t b, int wait);
+    // Improved blocking functions with CAN checking
+    void orangeBlinker2(uint8_t r, uint8_t g, uint8_t b, int wait, CanHandler* canHandler);
+    void orangeBlinker3(uint8_t r, uint8_t g, uint8_t b, int wait, CanHandler* canHandler);
+    void hazards(uint8_t r, uint8_t g, uint8_t b, int wait, CanHandler* canHandler);
     
     void brake_on();
     void brake_off();
