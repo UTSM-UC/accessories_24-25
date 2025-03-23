@@ -12,6 +12,7 @@ void InputHandler::setupPins() {
     pinMode(ENABLE3_PIN, INPUT_PULLUP);
     pinMode(HEADLIGHT_PIN, OUTPUT);
     pinMode(HORN_PIN, OUTPUT);
+    digitalWrite(HORN_PIN, HIGH);
     pinMode(LED_PIN, OUTPUT);
     pinMode(WIPER_PIN, OUTPUT);
     pinMode(BRAKE_PIN, INPUT_PULLUP);

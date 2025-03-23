@@ -62,7 +62,7 @@ void loop() {
     
     // Handle digital outputs
     digitalWrite(HEADLIGHT_PIN, canHandler.getBit(2) ? HIGH : LOW);
-    digitalWrite(HORN_PIN, canHandler.getBit(3) ? HIGH : LOW);
+    digitalWrite(HORN_PIN, canHandler.getBit(3) ? LOW : HIGH);
     digitalWrite(WIPER_PIN, canHandler.getBit(5) ? HIGH : LOW);
   }
   
@@ -70,7 +70,7 @@ void loop() {
   lightCtrl.running_lights();
   
   // Call the heartbeat function
-  sysUtils.heartbeat();
+  //sysUtils.heartbeat();
   
   delay(5);  // Even shorter delay for more responsive input checking
 }
