@@ -88,6 +88,7 @@ void setup() {
   strip4.begin();  // INITIALIZE NeoPixel strip object (REQUIRED)
   strip4.show();   // Turn OFF all pixels ASAP
   strip4.setBrightness(BRIGHTNESS);
+  brake_off()
   delay(2000);
 }
 
