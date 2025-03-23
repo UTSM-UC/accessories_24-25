@@ -12,8 +12,6 @@ InputHandler inputHandler;
 SystemUtils sysUtils;
 
 void setup() {
-  Serial.begin(115200);
-  
   // Setup pins
   inputHandler.setupPins();
   
@@ -36,7 +34,6 @@ void loop() {
   // First, check brake button - highest priority
   int brakeState = inputHandler.edgeDetector(BRAKE_PIN);
   if (brakeState != -1) {
-    Serial.print("\nSent;     ");
     canHandler.sendCANMessage(2, brakeState == 1);
     
     // Handle brake lights directly with highest priority
@@ -55,10 +52,6 @@ void loop() {
   
   // Handle CAN message data
   if (canHandler.getMaskedCanId() & CAN_FILTER) {
-    // Debug print to see exactly what's coming in
-    Serial.print("Message received: 0x");
-    Serial.println(canHandler.getBuffer()[0], HEX);
-    
     if (canHandler.getBit(4)) {  // Hazard
       lightCtrl.hazards(255, 30, 0, SPEED);  // Blocking hazard function
     } else if (canHandler.getBit(1)) {  // Left turn

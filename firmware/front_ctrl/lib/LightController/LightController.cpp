@@ -157,9 +157,6 @@ void LightController::brake_on() {
     }
     strip2->show();
     strip3->show();
-    
-    // Debug output
-    Serial.println("BRAKE ON");
 }
 
 void LightController::brake_off() {
@@ -168,9 +165,6 @@ void LightController::brake_off() {
     
     // Return to running lights
     running_lights();
-    
-    // Debug output
-    Serial.println("BRAKE OFF");
 }
 
 void LightController::running_lights() {

@@ -12,12 +12,9 @@ CanHandler::CanHandler(int spiCsPin) {
 
 bool CanHandler::begin() {
     if (can->begin(MCP_ANY, CAN_500KBPS, MCP_8MHZ) == CAN_OK) {
-        Serial.println("CAN Init OK!");
         can->setMode(MCP_NORMAL);
-        Serial.println("CAN bus ready to send and receive.");
         return true;
     } else {
-        Serial.println("CAN Init Failed!");
         return false;
     }
 }
@@ -31,17 +28,6 @@ void CanHandler::readCANMessage() {
     if (received || buf[0] != 0) {
         can->readMsgBuf(&canId, 0, &len, buf);  // Read data
         maskedCanId = masking(canId);
-
-        if(received) {
-            Serial.print("Received; CAN ID: ");
-            Serial.print(canId, HEX);
-            Serial.print(", Data: ");
-            for (int i = 0; i < len; i++) {
-                Serial.print(buf[i], HEX);
-                Serial.print(" ");
-                Serial.println();
-            }
-        }
     }
 }
 
@@ -50,20 +36,10 @@ void CanHandler::sendCANMessage(int bitPosition, bool state) {
         canMessage = buf[0];
         canMessage |= (1 << bitPosition);
         can->sendMsgBuf(CAN_ID_FRONT, 0, 1, &canMessage);  
-        Serial.print("Can ID: ");
-        Serial.print(CAN_ID_FRONT, HEX);
-        Serial.print(" Data: ");
-        Serial.print(canMessage, HEX);
-        Serial.println(" HIGH");
     } else {
         canMessage = buf[0];
         canMessage &= ~(1 << bitPosition);
         can->sendMsgBuf(CAN_ID_FRONT, 0, 1, &canMessage);
-        Serial.print("Can ID: ");
-        Serial.print(CAN_ID_FRONT, HEX);
-        Serial.print(" Data: ");
-        Serial.print(canMessage, HEX);
-        Serial.println();
     }
 }
 
