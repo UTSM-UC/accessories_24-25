@@ -61,7 +61,8 @@ void loop() {
     }
     
     // Handle digital outputs
-    digitalWrite(HEADLIGHT_PIN, canHandler.getBit(2) ? HIGH : LOW);
+    digitalWrite(HEADLIGHT_PIN1, canHandler.getBit(2) ? HIGH : LOW);
+    digitalWrite(HEADLIGHT_PIN2, canHandler.getBit(2) ? HIGH : LOW);
     digitalWrite(HORN_PIN, canHandler.getBit(3) ? LOW : HIGH);
     digitalWrite(WIPER_PIN, canHandler.getBit(5) ? HIGH : LOW);
   }

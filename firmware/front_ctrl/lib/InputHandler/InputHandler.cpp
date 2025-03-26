@@ -10,7 +10,8 @@ InputHandler::InputHandler() {
 
 void InputHandler::setupPins() {
     pinMode(ENABLE3_PIN, INPUT_PULLUP);
-    pinMode(HEADLIGHT_PIN, OUTPUT);
+    pinMode(HEADLIGHT_PIN1, OUTPUT);
+    pinMode(HEADLIGHT_PIN2, OUTPUT);
     pinMode(HORN_PIN, OUTPUT);
     digitalWrite(HORN_PIN, HIGH);
     pinMode(LED_PIN, OUTPUT);

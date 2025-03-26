@@ -12,7 +12,8 @@
 #define HORN_PIN 0
 #define L_BLINKER_PIN 3
 #define R_BLINKER_PIN 4
-#define HEADLIGHT_PIN 5
+#define HEADLIGHT_PIN1 5
+#define HEADLIGHT_PIN2 6
 #define LED_PIN 5
 #define WIPER_PIN 7
 #define BRAKE_PIN 8
